@@ -5,13 +5,18 @@ import { ImDownload3 } from "react-icons/im";
 import { RiFileExcel2Fill } from "react-icons/ri";
 import { regions } from "../filter/filterOptions";
 import { FaEllipsisVertical } from "react-icons/fa6";
+import { useOutsideClick } from "../../hooks/useOutsideClick";
 
 const CandidatesList = ({ candidates }) => {
   const [openDialogCandidate, setOpenDialogCandidate] = useState(null);
+  const ref = useOutsideClick(
+    () => setOpenDialogCandidate(null),
+    openDialogCandidate
+  );
 
   return (
     <div>
-      <div className="w-full overflow-x-auto my-4 ">
+      <div className="w-full overflow-x-auto my-4">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-4">
           <div className="flex gap-2 w-full md:w-auto">
             <input
@@ -132,8 +137,11 @@ const CandidatesList = ({ candidates }) => {
                 );
               })}
               {openDialogCandidate && (
-                <div className="fixed inset-0 bg-[#00000066] backdrop-blur-sm flex items-center justify-center z-50">
-                  <div className="bg-white rounded shadow p-6 max-w-xl w-full ">
+                <div className="fixed w-dvw h-dvh inset-0 bg-[#00000066] backdrop-blur-sm flex items-center justify-center z-50">
+                  <div
+                    className="bg-white rounded shadow p-6 max-w-xl w-full"
+                    ref={ref}
+                  >
                     <h2 className="text-lg font-semibold mb-4">
                       Candidate Summary
                     </h2>
@@ -152,8 +160,7 @@ const CandidatesList = ({ candidates }) => {
             </tbody>
           </table>
         </div>
-
-        <div className="flex items-center justify-between mt-4 text-sm text-gray-600">
+        {/* <div className="flex items-center justify-between mt-4 text-sm text-gray-600">
           <span>1 to 60 of 650 records</span>
           <div className="flex gap-1 items-center">
             <button className="px-2 py-1 border rounded">1</button>
@@ -164,7 +171,7 @@ const CandidatesList = ({ candidates }) => {
             <button className="px-2 py-1 border rounded">...</button>
             <button className="px-2 py-1 border rounded">10</button>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
