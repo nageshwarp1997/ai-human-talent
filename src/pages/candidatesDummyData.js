@@ -92,6 +92,13 @@ export const DUMMY_DATA = {
       summary:
         "Research Analyst Summary for Ewy A. Mathé:  Dr. Ewy A. Mathé is a distinguished informatics director at the National Center for Advancing Translational Sciences with a robust academic background spanning multiple prestigious institutions, including the National Institutes of Health and The Ohio State University. With a doctoral degree and over a decade of research experience, Dr. Mathé has established a significant academic footprint, evidenced by an impressive citation count of 7,364 and a notable h-index of 37.  Specializing in translational research informatics, Dr. Mathé demonstrates expertise across complex biomedical domains, particularly in cancer research and musculoskeletal science. While the current data suggests no direct industry collaborations or patent developments, the extensive academic network and affiliations with leading research centers indicate substantial scientific influence.  The candidate's KPI score of 0.3385 reflects a moderate research impact, with potential for further strategic development in translational science innovations. Dr. Mathé's professional trajectory suggests a strong commitment to advancing scientific knowledge through sophisticated informatics approaches, positioning her as a valuable contributor in the biomedical research ecosystem.",
     },
+
+
+
+
+
+
+    // END
     {
       recent_pubs: "12",
       works_count: "65",

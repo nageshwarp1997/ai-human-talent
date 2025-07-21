@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { MdOutlineFilterAlt } from "react-icons/md";
-import { MdCompareArrows } from "react-icons/md";
+import { MdOutlineFilterAlt, MdCompareArrows } from "react-icons/md";
 import { ImDownload3 } from "react-icons/im";
 import { RiFileExcel2Fill } from "react-icons/ri";
 import { regions } from "../filter/filterOptions";
@@ -12,7 +11,7 @@ const CandidatesList = ({ candidates }) => {
   const [openDialogCandidate, setOpenDialogCandidate] = useState(null);
   const [showCompareCandidates, setShowCompareCandidates] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
 
   const ref = useOutsideClick(
@@ -81,9 +80,7 @@ const CandidatesList = ({ candidates }) => {
           <div className="flex gap-2 text-[#263338]">
             <button
               onClick={() => {
-                selectedRows.length
-                  ? setShowCompareCandidates(true)
-                  : undefined;
+                selectedRows.length && setShowCompareCandidates(true);
               }}
               disabled={!selectedRows.length}
               className="inline-flex items-center gap-1 border border-[#BFBEBE] px-3 py-1 rounded-sm text-sm cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
@@ -116,11 +113,8 @@ const CandidatesList = ({ candidates }) => {
             </div>
           </div>
         </div>
-        <div
-          className="max-h-[400px] overflow-auto"
-          style={{ scrollbarWidth: "none" }}
-        >
-          <table className="table-auto w-full text-sm text-left border-collapse max-h-[400px]">
+        <div className="w-full max-h-[400px] overflow-auto">
+          <table className="table-auto w-full text-sm text-left border-collapse break-words">
             <thead className="sticky top-0">
               <tr className="bg-[#E5ECEC] border border-[#DEE2E6] rounded-t-sm">
                 <th className="px-2 py-3">
@@ -139,15 +133,12 @@ const CandidatesList = ({ candidates }) => {
                 <th className="px-2 py-3">Nationality</th>
                 <th className="px-2 py-3">Location</th>
                 <th className="px-2 py-3">University</th>
-                <th className="px-2 py-3">Salary in Range</th>
+                <th className="px-2 py-3">Salary in Range (AED)</th>
                 <th className="px-2 py-3">Fit (%)</th>
                 <th className="px-2 py-3">Ex. Conver Rate</th>
               </tr>
             </thead>
-            <tbody
-              className="text-gray-800 max-h-[400px] overflow-auto"
-              style={{ scrollbarWidth: "none" }}
-            >
+            <tbody className="text-gray-800">
               {paginatedCandidates.map((candidate) => (
                 <tr
                   key={candidate?.orcid_id}
@@ -161,40 +152,41 @@ const CandidatesList = ({ candidates }) => {
                       onChange={() => handleCheckboxChange(candidate.orcid_id)}
                     />
                   </td>
-                  <td className="px-2 py-2 flex items-center gap-2 whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px]">
-                    <div className="inline-flex min-w-6 min-h-6 bg-[#f2f2f2] rounded-full">
-                      {/* <img src="https://i.pravatar.cc/24?img=1" className="w-full h-full object-cover aspect-square rounded-full" /> */}
+                  <td className="px-2 py-2 align-middle">
+                    <div className="flex items-center gap-2">
+                      <div className="min-w-6 min-h-6 bg-[#f2f2f2] rounded-full" />
+                      <span className="capitalize break-words">
+                        {candidate?.name}
+                      </span>
                     </div>
-                    <span className="capitalize">{candidate?.name}</span>
                   </td>
-                  <td className="px-2 py-2 whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px] capitalize">
+
+                  <td className="px-2 py-2 capitalize break-words">
                     {candidate?.current_position}
                   </td>
-                  <td className="px-2 py-2 whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px]">
+                  <td className="px-2 py-2 break-words">
                     {candidate?.current_organization}
                   </td>
-                  <td className="px-2 py-2 flex items-center gap-2 whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px]">
+                  <td className="px-2 py-2 flex items-center gap-2 break-words">
                     {
                       regions?.find(
                         (region) => region?.value === candidate?.country
                       )?.name
                     }
                   </td>
-                  <td className="px-2 py-2 whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px]">
-                    {candidate?.city}
-                  </td>
-                  <td className="px-2 py-2 whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px]">
+                  <td className="px-2 py-2 break-words">{candidate?.city}</td>
+                  <td className="px-2 py-2 break-words">
                     {candidate?.universities[0]}
                   </td>
-                  <td className="px-2 py-2 whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px]">
-                    {`AED ${formatSalaryRange(candidate?.estimated_salary)}`}
+                  <td className="px-2 py-2 text-nowrap">
+                    {`${formatSalaryRange(candidate?.estimated_salary)}`}
                   </td>
-                  <td className="px-2 py-2 whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px]">
+                  <td className="px-2 py-2 break-words">
                     <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs">
                       {(candidate?.kpi_score * 100).toFixed(2)}%
                     </span>
                   </td>
-                  <td className="px-2 py-2 inline-flex items-center gap-1 whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px]">
+                  <td className="px-2 py-2 inline-flex items-center gap-1 break-words">
                     <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs">
                       {(50.1).toFixed(2)}%
                     </span>
@@ -276,8 +268,8 @@ const CandidatesList = ({ candidates }) => {
         </div>
       </div>
       {showCompareCandidates && (
-        <div className="fixed inset-0 bg-black/50 border border-[red] w-dvw h-dvh flex items-center justify-center">
-          <div className="max-w-[60dvw] max-h-[50dvh] w-full h-full bg-white border border-[blue]">
+        <div className="fixed inset-0 bg-black/50 w-dvw h-dvh flex items-center justify-center z-50">
+          <div className="max-w-[60dvw] max-h-[50dvh] w-full h-full bg-white overflow-auto rounded border">
             <LineChart />
           </div>
         </div>

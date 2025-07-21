@@ -4,16 +4,15 @@ import BarGraph from "../components/dashboard/BarGraph";
 import RadarGraph from "../components/dashboard/RadarGraph";
 import PolarGraph from "../components/dashboard/PolarGraph";
 import CandidatesList from "../components/dashboard/CandidatesList";
-import { AiFillInteraction } from "react-icons/ai";
 import banner from "../assets/banner.png";
 import { DUMMY_DATA } from "./candidatesDummyData";
-// import { initialState } from "../components/filter/filterOptions";
+import { initialState } from "../components/filter/filterOptions";
 
 const Dashboard = () => {
-  // const [candidates, setCandidates] = useState(DUMMY_DATA);
-  const [candidates, setCandidates] = useState({});
-  // const [selectedFilters, setSelectedFilters] = useState(initialState);
-  const [selectedFilters, setSelectedFilters] = useState({});
+  const [candidates, setCandidates] = useState(DUMMY_DATA);
+  // const [candidates, setCandidates] = useState({});
+  const [selectedFilters, setSelectedFilters] = useState(initialState);
+  // const [selectedFilters, setSelectedFilters] = useState({});
 
   const fetchCandidates = async (filter) => {
     setSelectedFilters(filter);
@@ -79,7 +78,7 @@ const Dashboard = () => {
           </p>
         </div>
       ) : (
-        <div className="w-full mx-4 flex flex-col gap-6">
+        <div className="flex-1 w-full mx-4 flex flex-col gap-6">
           <div className="w-full mt-2">
             <input
               type="text"
@@ -90,7 +89,7 @@ const Dashboard = () => {
           <div className="grid w-full sm:grid-cols-1 lg:grid-cols-3">
             <div className=" px-3 border-r-[#CAD5D5] border-r h-[300px] w-full">
               <h5 className="text-center font-bold">
-                Candidates by Salary Range
+                Candidates by Salary Range (AED)
               </h5>
               <BarGraph candidates={candidates.candidates} />
             </div>
@@ -108,8 +107,10 @@ const Dashboard = () => {
               <PolarGraph candidates={candidates} />
             </div>
           </div>
-          <div className="w-full">
-            <h4 className="font-bold">Top {} Candidates List</h4>
+          <div className="w-full mt-4">
+            <h4 className="font-bold">
+              Top {candidates?.candidates?.length} Candidates List
+            </h4>
             <CandidatesList candidates={candidates} />
           </div>
         </div>
