@@ -199,13 +199,12 @@ const FilterComponent = ({ fetchCandidates }) => {
               }
               className="appearance-none w-full bg-white border border-[#C9C9C9] p-2 px-4 rounded-full leading-tight focus:outline-none focus:ring-1 focus:ring-[#C9C9C9] overflow-hidden"
             >
-              {jobRoles?.map((job, index) => {
-                return (
-                  <option key={index} value={job}>
-                    {job}
-                  </option>
-                );
-              })}
+              <option value="">Select a job</option>
+              {jobRoles?.map((job, index) => (
+                <option key={index} value={job}>
+                  {job}
+                </option>
+              ))}
             </select>
             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-600 bg-[#0A6562] rounded-r-full">
               <MdKeyboardArrowDown className="text-2xl text-white" />
