@@ -4,6 +4,7 @@ import { ImDownload3 } from "react-icons/im";
 import { RiFileExcel2Fill } from "react-icons/ri";
 import { regions } from "../filter/filterOptions";
 import { FaEllipsisVertical } from "react-icons/fa6";
+import { MdClose } from "react-icons/md";
 import { useOutsideClick } from "../../hooks/useOutsideClick";
 import LineChart from "./LineChart";
 
@@ -14,9 +15,14 @@ const CandidatesList = ({ candidates }) => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const ref = useOutsideClick(
+  const summaryRef = useOutsideClick(
     () => setOpenDialogCandidate(null),
     openDialogCandidate
+  );
+
+  const compareRef = useOutsideClick(
+    () => setShowCompareCandidates(null),
+    showCompareCandidates
   );
 
   const handleCheckboxChange = (candidateId) => {
@@ -201,7 +207,7 @@ const CandidatesList = ({ candidates }) => {
                 <div className="fixed w-dvw h-dvh inset-0 bg-[#00000066] backdrop-blur-sm flex items-center justify-center z-50">
                   <div
                     className="bg-white rounded shadow p-6 max-w-xl w-full"
-                    ref={ref}
+                    ref={summaryRef}
                   >
                     <h2 className="text-lg font-semibold mb-4">
                       Candidate Summary
@@ -269,7 +275,16 @@ const CandidatesList = ({ candidates }) => {
       </div>
       {showCompareCandidates && (
         <div className="fixed inset-0 bg-black/50 w-dvw h-dvh flex items-center justify-center z-50">
-          <div className="max-w-[60dvw] max-h-[50dvh] w-full h-full bg-white overflow-auto rounded border">
+          <div
+            className="max-w-[60dvw] max-h-[50dvh] w-full h-full bg-white overflow-auto rounded relative"
+            ref={compareRef}
+          >
+            <div
+              className="absolute top-2 right-2 cursor-pointer"
+              onClick={() => setShowCompareCandidates(false)}
+            >
+              <MdClose className="w-6 h-6" />
+            </div>
             <LineChart />
           </div>
         </div>
