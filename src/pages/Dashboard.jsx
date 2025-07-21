@@ -7,10 +7,13 @@ import CandidatesList from "../components/dashboard/CandidatesList";
 import { AiFillInteraction } from "react-icons/ai";
 import banner from "../assets/banner.png";
 import { DUMMY_DATA } from "./candidatesDummyData";
+// import { initialState } from "../components/filter/filterOptions";
 
 const Dashboard = () => {
-  const [candidates, setCandidates] = useState(DUMMY_DATA);
-  const [selectedFiltrs, setSelectedFilters] = useState({});
+  // const [candidates, setCandidates] = useState(DUMMY_DATA);
+  const [candidates, setCandidates] = useState({});
+  // const [selectedFilters, setSelectedFilters] = useState(initialState);
+  const [selectedFilters, setSelectedFilters] = useState({});
 
   const fetchCandidates = async (filter) => {
     setSelectedFilters(filter);
@@ -86,15 +89,17 @@ const Dashboard = () => {
           </div>
           <div className="grid w-full sm:grid-cols-1 lg:grid-cols-3">
             <div className=" px-3 border-r-[#CAD5D5] border-r h-[300px] w-full">
-              <h5 className="text-center font-bold">Source of Hire</h5>
-              <BarGraph />
+              <h5 className="text-center font-bold">
+                Candidates by Salary Range
+              </h5>
+              <BarGraph candidates={candidates.candidates} />
             </div>
             <div className=" px-3 h-[300px] border-r-[#CAD5D5] border-r">
               <h5 className="text-center font-bold">
                 Average Candidate vs. AI Benchmark
               </h5>
               <RadarGraph
-                selectedFiltrs={selectedFiltrs}
+                selectedFilters={selectedFilters}
                 candidates={candidates}
               />
             </div>
