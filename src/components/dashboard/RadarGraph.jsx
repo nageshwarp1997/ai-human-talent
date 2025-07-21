@@ -19,14 +19,14 @@ ChartJS.register(
   Legend
 );
 
-const RadarGraph = ({ selectedFiltrs, candidates }) => {
+const RadarGraph = ({ selectedFilters, candidates }) => {
   const [kpiAverageCount, setKpiAverageCount] = useState({});
   const [kpiAICount, setKpiAICount] = useState({});
 
   useEffect(() => {
     const selectedKPIs = [];
-    for (const kpiKey in selectedFiltrs.selected_kpis) {
-      const kpi = selectedFiltrs.selected_kpis[kpiKey];
+    for (const kpiKey in selectedFilters.selected_kpis) {
+      const kpi = selectedFilters.selected_kpis[kpiKey];
       if (kpi.enabled) {
         selectedKPIs.push(kpiKey + "score");
         setKpiAICount((prev) => {
@@ -37,7 +37,7 @@ const RadarGraph = ({ selectedFiltrs, candidates }) => {
     const averageCandidate = {};
     selectedKPIs?.forEach((kpi) => {
       const kpiSum = candidates?.candidates?.reduce((sum, candidate) => {
-        if (candidate?.hasOwnProperty(kpi)) {
+        if (candidate && Object.prototype.hasOwnProperty.call(candidate, kpi)) {
           const value = candidate[kpi] ?? 0;
           return sum + value;
         }
@@ -54,12 +54,12 @@ const RadarGraph = ({ selectedFiltrs, candidates }) => {
           [kpiKey
             .replace(/score$/, "")
             .split("_")
-            .map((word, index) => word[0].toUpperCase() + word.slice(1))
+            .map((word) => word[0].toUpperCase() + word.slice(1))
             .join(" ")]: (kpi / candidates?.candidates?.length) * 100,
         };
       });
     }
-  }, [candidates]);
+  }, [candidates, selectedFilters.selected_kpis]);
 
   const data = {
     labels:
