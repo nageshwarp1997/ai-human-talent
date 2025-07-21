@@ -6,9 +6,10 @@ import PolarGraph from "../components/dashboard/PolarGraph";
 import CandidatesList from "../components/dashboard/CandidatesList";
 import { AiFillInteraction } from "react-icons/ai";
 import banner from "../assets/banner.png";
+import { DUMMY_DATA } from "./candidatesDummyData";
 
 const Dashboard = () => {
-  const [candidates, setCandidates] = useState({});
+  const [candidates, setCandidates] = useState(DUMMY_DATA);
   const [selectedFiltrs, setSelectedFilters] = useState({});
 
   const fetchCandidates = async (filter) => {
@@ -46,7 +47,7 @@ const Dashboard = () => {
         selected_kpis: filter.selected_kpis,
       };
       const response = await fetch(
-        "https://talent-poc.ctruh.com/profile-candidates",
+        "https://talentbackend.ctruh.com/profile-candidates",
         {
           method: "POST",
           headers: {
