@@ -6,22 +6,72 @@ import { RiFileExcel2Fill } from "react-icons/ri";
 import { regions } from "../filter/filterOptions";
 import { FaEllipsisVertical } from "react-icons/fa6";
 import { useOutsideClick } from "../../hooks/useOutsideClick";
+import LineChart from "./LineChart";
 
 const CandidatesList = ({ candidates }) => {
   const [openDialogCandidate, setOpenDialogCandidate] = useState(null);
+  const [showCompareCandidates, setShowCompareCandidates] = useState(false);
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [currentPage, setCurrentPage] = useState(1);
+
   const ref = useOutsideClick(
     () => setOpenDialogCandidate(null),
     openDialogCandidate
   );
 
+  const handleCheckboxChange = (candidateId) => {
+    setSelectedRows((prev) =>
+      prev.includes(candidateId)
+        ? prev.filter((id) => id !== candidateId)
+        : [...prev, candidateId]
+    );
+  };
+
+  const handleSelectAll = (e) => {
+    const currentCandidates = paginatedCandidates.map((c) => c.orcid_id);
+    if (e.target.checked) {
+      setSelectedRows((prev) =>
+        Array.from(new Set([...prev, ...currentCandidates]))
+      );
+    } else {
+      setSelectedRows((prev) =>
+        prev.filter((id) => !currentCandidates.includes(id))
+      );
+    }
+  };
+
+  const totalPages = Math.ceil(
+    (candidates?.candidates?.length || 0) / rowsPerPage
+  );
+  const paginatedCandidates =
+    candidates?.candidates?.slice(
+      (currentPage - 1) * rowsPerPage,
+      currentPage * rowsPerPage
+    ) || [];
+
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
+  const formatSalaryRange = (salary) => {
+    if (!salary || isNaN(salary)) return "N/A";
+    const lower = Math.floor(salary / 100000) * 10;
+    const upper = lower + 10;
+    return `${lower}k-${upper}k`;
+  };
+
   return (
-    <div>
-      <div className="w-full overflow-x-auto my-4">
+    <div className="w-full">
+      <div className="w-full my-4">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-4">
           <div className="flex gap-2 w-full md:w-auto">
             <input
               type="text"
               placeholder="Search"
+              disabled={true} // TODO: Make it enabled
               className="border rounded-sm border-[#C9C9C9] px-3 w-full md:w-64 text-sm"
             />
             <button className="rounded-sm text-[#0A6562] shadow-[0px_3px_15px_#53535329] p-2">
@@ -29,9 +79,17 @@ const CandidatesList = ({ candidates }) => {
             </button>
           </div>
           <div className="flex gap-2 text-[#263338]">
-            <button className="inline-flex items-center gap-1 border border-[#BFBEBE] px-3 py-1 rounded-sm text-sm">
-              <MdCompareArrows className="text-lg font-bold" /> Compare
-              Candidates
+            <button
+              onClick={() => {
+                selectedRows.length
+                  ? setShowCompareCandidates(true)
+                  : undefined;
+              }}
+              disabled={!selectedRows.length}
+              className="inline-flex items-center gap-1 border border-[#BFBEBE] px-3 py-1 rounded-sm text-sm cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
+            >
+              <MdCompareArrows className="text-lg font-bold" />
+              <span>Compare Candidates</span>
             </button>
             <button className="inline-flex items-center gap-1 border border-[#BFBEBE] px-3 py-1 rounded-sm text-sm">
               <ImDownload3 className="text-md" /> Download
@@ -41,11 +99,19 @@ const CandidatesList = ({ candidates }) => {
             </button>
             <div className="flex items-center gap-1 text-sm ml-2">
               <span>Rows per page</span>
-              <select className="border border-[#BFBEBE] rounded-sm px-1 py-1 text-sm focus:outline-[#BFBEBE]">
-                <option value="10">10</option>
-                <option value="25">25</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
+              <select
+                className="border border-[#BFBEBE] rounded-sm px-1 py-1 text-sm focus:outline-[#BFBEBE] cursor-pointer"
+                value={rowsPerPage}
+                onChange={(e) => {
+                  setRowsPerPage(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
+              >
+                {[10, 25, 50, 100].map((value) => (
+                  <option key={value} value={value}>
+                    {value}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
@@ -55,10 +121,17 @@ const CandidatesList = ({ candidates }) => {
           style={{ scrollbarWidth: "none" }}
         >
           <table className="table-auto w-full text-sm text-left border-collapse max-h-[400px]">
-            <thead>
+            <thead className="sticky top-0">
               <tr className="bg-[#E5ECEC] border border-[#DEE2E6] rounded-t-sm">
                 <th className="px-2 py-3">
-                  <input type="checkbox" className="w-4 h-4" />
+                  <input
+                    type="checkbox"
+                    className="w-4 h-4 cursor-pointer"
+                    checked={paginatedCandidates.every((c) =>
+                      selectedRows.includes(c.orcid_id)
+                    )}
+                    onChange={handleSelectAll}
+                  />
                 </th>
                 <th className="px-2 py-3">Employee Name</th>
                 <th className="px-2 py-3">Position</th>
@@ -75,68 +148,63 @@ const CandidatesList = ({ candidates }) => {
               className="text-gray-800 max-h-[400px] overflow-auto"
               style={{ scrollbarWidth: "none" }}
             >
-              {candidates?.candidates?.map((candidate) => {
-                const formatSalaryRange = (salary) => {
-                  if (!salary || isNaN(salary)) return "N/A";
-                  const lower = Math.floor(salary / 100000) * 10;
-                  const upper = lower + 10;
-                  return `${lower}k-${upper}k`;
-                };
-                return (
-                  <tr
-                    key={candidate?.orcid_id}
-                    className="border-b border-[#C7D2D2] hover:bg-gray-50"
-                  >
-                    <td className="px-2 py-2">
-                      <input type="checkbox" className="w-4 h-4" />
-                    </td>
-                    <td className="px-2 py-2 flex items-center gap-2 whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px]">
-                      <div className="inline-flex min-w-6 min-h-6 bg-[#f2f2f2] rounded-full">
-                        {/* <img src="https://i.pravatar.cc/24?img=1" className="w-6 h-6 rounded-full" /> */}
-                      </div>
-                      {candidate?.name}
-                    </td>
-                    <td className="px-2 py-2 whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px]">
-                      {candidate?.current_position}
-                    </td>
-                    <td className="px-2 py-2 whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px]">
-                      {candidate?.current_organization}
-                    </td>
-                    <td className="px-2 py-2 flex items-center gap-2 whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px]">
-                      {
-                        regions?.find(
-                          (region) => region?.value === candidate?.country
-                        )?.name
-                      }
-                    </td>
-                    <td className="px-2 py-2 whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px]">
-                      {candidate?.city}
-                    </td>
-                    <td className="px-2 py-2 whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px]">
-                      {candidate?.universities[0]}
-                    </td>
-                    <td className="px-2 py-2 whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px]">
-                      {formatSalaryRange(candidate?.estimated_salary)}
-                    </td>
-                    <td className="px-2 py-2 whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px]">
-                      <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs">
-                        {(candidate?.kpi_score * 100).toFixed(2)}%
-                      </span>
-                    </td>
-                    <td className="px-2 py-2 inline-flex items-center gap-1 whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px]">
-                      <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs">
-                        {(50.1).toFixed(2)}%
-                      </span>
-                      <FaEllipsisVertical
-                        className="cursor-pointer"
-                        onClick={() =>
-                          setOpenDialogCandidate(candidate?.summary)
-                        }
-                      />
-                    </td>
-                  </tr>
-                );
-              })}
+              {paginatedCandidates.map((candidate) => (
+                <tr
+                  key={candidate?.orcid_id}
+                  className="border-b border-[#C7D2D2] hover:bg-gray-50"
+                >
+                  <td className="px-2 py-2">
+                    <input
+                      type="checkbox"
+                      className="w-4 h-4 cursor-pointer"
+                      checked={selectedRows.includes(candidate.orcid_id)}
+                      onChange={() => handleCheckboxChange(candidate.orcid_id)}
+                    />
+                  </td>
+                  <td className="px-2 py-2 flex items-center gap-2 whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px]">
+                    <div className="inline-flex min-w-6 min-h-6 bg-[#f2f2f2] rounded-full">
+                      {/* <img src="https://i.pravatar.cc/24?img=1" className="w-full h-full object-cover aspect-square rounded-full" /> */}
+                    </div>
+                    <span className="capitalize">{candidate?.name}</span>
+                  </td>
+                  <td className="px-2 py-2 whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px] capitalize">
+                    {candidate?.current_position}
+                  </td>
+                  <td className="px-2 py-2 whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px]">
+                    {candidate?.current_organization}
+                  </td>
+                  <td className="px-2 py-2 flex items-center gap-2 whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px]">
+                    {
+                      regions?.find(
+                        (region) => region?.value === candidate?.country
+                      )?.name
+                    }
+                  </td>
+                  <td className="px-2 py-2 whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px]">
+                    {candidate?.city}
+                  </td>
+                  <td className="px-2 py-2 whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px]">
+                    {candidate?.universities[0]}
+                  </td>
+                  <td className="px-2 py-2 whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px]">
+                    {`AED ${formatSalaryRange(candidate?.estimated_salary)}`}
+                  </td>
+                  <td className="px-2 py-2 whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px]">
+                    <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs">
+                      {(candidate?.kpi_score * 100).toFixed(2)}%
+                    </span>
+                  </td>
+                  <td className="px-2 py-2 inline-flex items-center gap-1 whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px]">
+                    <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs">
+                      {(50.1).toFixed(2)}%
+                    </span>
+                    <FaEllipsisVertical
+                      className="cursor-pointer"
+                      onClick={() => setOpenDialogCandidate(candidate?.summary)}
+                    />
+                  </td>
+                </tr>
+              ))}
               {openDialogCandidate && (
                 <div className="fixed w-dvw h-dvh inset-0 bg-[#00000066] backdrop-blur-sm flex items-center justify-center z-50">
                   <div
@@ -161,19 +229,59 @@ const CandidatesList = ({ candidates }) => {
             </tbody>
           </table>
         </div>
-        {/* <div className="flex items-center justify-between mt-4 text-sm text-gray-600">
-          <span>1 to 60 of 650 records</span>
+        <div className="flex items-center justify-between mt-4 text-sm text-gray-600">
+          <span>
+            {(currentPage - 1) * rowsPerPage + 1} to{" "}
+            {Math.min(
+              currentPage * rowsPerPage,
+              candidates?.candidates?.length
+            )}{" "}
+            of {candidates?.candidates?.length} records
+          </span>
           <div className="flex gap-1 items-center">
-            <button className="px-2 py-1 border rounded">1</button>
-            <button className="px-2 py-1 border rounded">2</button>
-            <button className="px-2 py-1 border rounded">3</button>
-            <button className="px-2 py-1 border rounded">4</button>
-            <button className="px-2 py-1 border rounded">5</button>
-            <button className="px-2 py-1 border rounded">...</button>
-            <button className="px-2 py-1 border rounded">10</button>
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className={`px-2 py-1 border rounded ${
+                currentPage === 1 ? "cursor-not-allowed" : "cursor-pointer"
+              }`}
+            >
+              Prev
+            </button>
+            {[...Array(totalPages)].map((_, i) => (
+              <button
+                key={i}
+                className={`px-2 py-1 border rounded ${
+                  currentPage === i + 1
+                    ? "bg-gray-200 cursor-not-allowed"
+                    : "cursor-pointer"
+                }`}
+                onClick={() => handlePageChange(i + 1)}
+              >
+                {i + 1}
+              </button>
+            ))}
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className={`px-2 py-1 border rounded ${
+                currentPage === totalPages
+                  ? "cursor-not-allowed"
+                  : "cursor-pointer"
+              }`}
+            >
+              Next
+            </button>
           </div>
-        </div> */}
+        </div>
       </div>
+      {showCompareCandidates && (
+        <div className="fixed inset-0 bg-black/50 border border-[red] w-dvw h-dvh flex items-center justify-center">
+          <div className="max-w-[60dvw] max-h-[50dvh] w-full h-full bg-white border border-[blue]">
+            <LineChart />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
