@@ -268,14 +268,14 @@ export const subDomains = [
     name: "Molecular Biology",
     value: "molecular biology",
   },
-  {
-    name: "Cell Biology",
-    value: "cell biology",
-  },
-  {
-    name: "Microbiology",
-    value: "microbiology",
-  },
+  // {
+  //   name: "Cell Biology",
+  //   value: "cell biology",
+  // },
+  // {
+  //   name: "Microbiology",
+  //   value: "microbiology",
+  // },
 ];
 
 export const regions = [
