@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Chart as ChartJS,
   RadialLinearScale,
@@ -17,40 +17,41 @@ ChartJS.register(
   ChartDataLabels
 );
 
-const PolarGraph = ({ candidates }) => {
+// Utility to generate a consistent set of colors
+const generateColors = (count) => {
+  const colors = [];
+  for (let i = 0; i < count; i++) {
+    const hue = Math.floor((360 / count) * i);
+    colors.push(`hsl(${hue}, 70%, 60%)`);
+  }
+  return colors;
+};
+
+const PolarGraphForRegion = ({ candidates }) => {
   const [candidatesCount, setCandidatesCount] = useState({});
   useEffect(() => {
-    const candidatesTerrirtory = candidates?.candidates?.reduce(
+    const candidatesCountry = candidates?.candidates?.reduce(
       (acc, candidate) => {
-        acc[candidate.city] = (acc[candidate.city] || 0) + 1;
+        acc[candidate.country] = (acc[candidate.country] || 0) + 1;
         return acc;
       },
       {}
     );
-    if (Object.keys(candidates)?.length > 0)
-      setCandidatesCount(candidatesTerrirtory);
+    if (Object.keys(candidatesCountry)?.length > 0)
+      setCandidatesCount(candidatesCountry);
   }, [candidates]);
 
+  const labels = Object.keys(candidatesCount);
+  const values = Object.values(candidatesCount);
+  const backgroundColors = generateColors(labels.length);
+
   const data = {
-    labels:
-      candidatesCount && Object.keys(candidatesCount)?.length > 0
-        ? Object.keys(candidatesCount)
-        : [],
+    labels,
     datasets: [
       {
-        label: "Popularity",
-        data:
-          candidatesCount && Object.keys(candidatesCount)?.length > 0
-            ? Object.values(candidatesCount)
-            : [],
-        backgroundColor: [
-          "#2CD9C5",
-          "#826AF9",
-          "#FFE700",
-          "#FF6C40",
-          "#2D99FF",
-          "#505D6F",
-        ],
+        label: "Candidates",
+        data: values,
+        backgroundColor: backgroundColors,
         borderWidth: 1,
       },
     ],
@@ -76,12 +77,16 @@ const PolarGraph = ({ candidates }) => {
         // },
       },
       datalabels: {
-        align: "end",
-        anchor: "end",
-        offset: 6,
-        formatter: (value) => value,
-        backgroundColor: "#fff",
+        // align: "end",
+        // anchor: "end",
+        // offset: 6,
+        // formatter: (value) => value,
+        // backgroundColor: "#fff",
         display: "auto",
+        color: "#000",
+        font: {
+          weight: "bold",
+        },
       },
     },
     scales: {
@@ -99,4 +104,4 @@ const PolarGraph = ({ candidates }) => {
   return <PolarArea data={data} options={options} />;
 };
 
-export default PolarGraph;
+export default PolarGraphForRegion;
