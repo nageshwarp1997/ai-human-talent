@@ -285,7 +285,11 @@ const CandidatesList = ({ candidates }) => {
             >
               <MdClose className="w-6 h-6" />
             </div>
-            <LineChart />
+            <LineChart
+              candidates={candidates.candidates?.filter((c) =>
+                selectedRows.includes(c?.orcid_id)
+              )}
+            />
           </div>
         </div>
       )}
