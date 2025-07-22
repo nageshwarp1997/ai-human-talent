@@ -285,7 +285,7 @@ export const regions = [
   },
   {
     name: "United Kingdom",
-    value: "UK",
+    value: "GB",
   },
 ];
 
