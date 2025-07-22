@@ -6,6 +6,7 @@ import { regions } from "../filter/filterOptions";
 import { MdClose } from "react-icons/md";
 import { useOutsideClick } from "../../hooks/useOutsideClick";
 import LineChart from "./LineChart";
+import { Link } from "react-router-dom";
 
 const CandidatesList = ({ candidates }) => {
   const [openDialogCandidate, setOpenDialogCandidate] = useState(null);
@@ -179,7 +180,11 @@ const CandidatesList = ({ candidates }) => {
                     />
                   </td>
                   <td className="px-2 py-2 align-middle">
-                    <div className="flex items-center gap-2">
+                    <Link
+                      to={`https://orcid.org/${candidate.orcid_id}`}
+                      target="_blank"
+                      className="flex items-center gap-2 text-blue-700"
+                    >
                       <div className="min-w-6 min-h-6 bg-[#f2f2f2] rounded-full">
                         {/* <img
                           src=""
@@ -190,11 +195,11 @@ const CandidatesList = ({ candidates }) => {
                       <span className="capitalize break-words">
                         {candidate?.name}
                       </span>
-                    </div>
+                    </Link>
                   </td>
 
                   <td className="px-2 py-2 capitalize break-words">
-                    {candidate?.current_position}
+                    {candidate?.current_position || "N/A"}
                   </td>
                   <td className="px-2 py-2 break-words">
                     {candidate?.current_organization}
