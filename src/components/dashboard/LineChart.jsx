@@ -74,7 +74,7 @@ const scores = [
     emerging_trend_alignment_score: 0.057,
     scientific_technical_foundationscore: 0.12,
     top_academic_institutionscore: 0.08,
-    digital_computing_skillsscore: 0.15,
+    digital_computing_skillsscore: 0.25,
     industrial_collaborationscore: 0.07,
     global_firmsscore: 0.06,
     patent_countscore: 0.1,
@@ -209,7 +209,7 @@ const scores = [
     emerging_trend_alignment_score: 0.06,
     scientific_technical_foundationscore: 0.13,
     top_academic_institutionscore: 0.1,
-    digital_computing_skillsscore: 0.15,
+    digital_computing_skillsscore: 0.55,
     industrial_collaborationscore: 0.07,
     global_firmsscore: 0.06,
     patent_countscore: 0.08,
@@ -219,28 +219,58 @@ const scores = [
   },
 ];
 
-
 const metrics = [
-  "career_progression_score",
-  "emerging_trend_alignment_score",
-  "scientific_technical_foundationscore",
-  "top_academic_institutionscore",
-  "digital_computing_skillsscore",
-  "industrial_collaborationscore",
-  "global_firmsscore",
-  "patent_countscore",
-  "research_credentialsscore",
-  "recent_pubsscore",
-  "founder_flagscore",
+  {
+    label: "CPS",
+    value: "career_progression_score",
+  },
+  {
+    label: "ETAS",
+    value: "emerging_trend_alignment_score",
+  },
+  {
+    label: "STFS",
+    value: "scientific_technical_foundationscore",
+  },
+  {
+    label: "TAIS",
+    value: "top_academic_institutionscore",
+  },
+  {
+    label: "DCSS",
+    value: "digital_computing_skillsscore",
+  },
+  {
+    label: "ICS",
+    value: "industrial_collaborationscore",
+  },
+  {
+    label: "GFS",
+    value: "global_firmsscore",
+  },
+  {
+    label: "PCS",
+    value: "patent_countscore",
+  },
+  {
+    label: "RCS",
+    value: "research_credentialsscore",
+  },
+  {
+    label: "RPS",
+    value: "recent_pubsscore",
+  },
+  {
+    label: "FFS",
+    value: "founder_flagscore",
+  },
 ];
 
 const chartData = {
-  labels: metrics.map((metric) =>
-    metric.replace(/_/g, " ").replace("score", "").trim()
-  ),
+  labels: metrics.map((metric) => metric.label),
   datasets: scores.map((person, idx) => ({
     label: person.name,
-    data: metrics.map((key) => person[key]),
+    data: metrics.map((matric) => person[matric.value] * 100),
     borderColor: `hsl(${(idx * 100) % 360}, 70%, 50%)`,
     backgroundColor: `hsl(${(idx * 100) % 360}, 70%, 70%)`,
     tension: 0.3,
@@ -258,11 +288,20 @@ const options = {
       mode: "index",
       intersect: false,
     },
+    datalabels: {
+      display: false,
+    },
   },
   scales: {
     y: {
       beginAtZero: true,
-      max: 0.2, // set max value according to your range
+      ticks: {
+        stepSize: 5,
+      },
+      title: {
+        display: true,
+        text: "Scores",
+      },
     },
   },
 };
