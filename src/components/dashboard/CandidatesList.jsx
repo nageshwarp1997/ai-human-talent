@@ -160,7 +160,13 @@ const CandidatesList = ({ candidates }) => {
                   </td>
                   <td className="px-2 py-2 align-middle">
                     <div className="flex items-center gap-2">
-                      <div className="min-w-6 min-h-6 bg-[#f2f2f2] rounded-full" />
+                      <div className="min-w-6 min-h-6 bg-[#f2f2f2] rounded-full">
+                        {/* <img
+                          src=""
+                          alt=""
+                          className="w-full h-full object-cover object-center aspect-square"
+                        /> */}
+                      </div>
                       <span className="capitalize break-words">
                         {candidate?.name}
                       </span>
@@ -192,14 +198,18 @@ const CandidatesList = ({ candidates }) => {
                       {(candidate?.kpi_score * 100).toFixed(2)}%
                     </span>
                   </td>
-                  <td className="px-2 py-2 inline-flex items-center gap-1 break-words">
-                    <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs">
-                      {(50.1).toFixed(2)}%
-                    </span>
-                    <FaEllipsisVertical
-                      className="cursor-pointer"
-                      onClick={() => setOpenDialogCandidate(candidate?.summary)}
-                    />
+                  <td className="px-2 py-2 align-middle">
+                    <div className="flex items-center gap-2">
+                      <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs">
+                        {(50.1).toFixed(2)}%
+                      </span>
+                      <FaEllipsisVertical
+                        className="cursor-pointer"
+                        onClick={() =>
+                          setOpenDialogCandidate(candidate?.summary)
+                        }
+                      />
+                    </div>
                   </td>
                 </tr>
               ))}

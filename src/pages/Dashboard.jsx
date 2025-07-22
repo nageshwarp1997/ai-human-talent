@@ -5,14 +5,13 @@ import RadarGraph from "../components/dashboard/RadarGraph";
 import PolarGraph from "../components/dashboard/PolarGraph";
 import CandidatesList from "../components/dashboard/CandidatesList";
 import banner from "../assets/banner.png";
-import { DUMMY_DATA } from "./candidatesDummyData";
-import { initialState } from "../components/filter/filterOptions";
+import Loading from "../components/loading/Loading";
 
 const Dashboard = () => {
-  const [candidates, setCandidates] = useState(DUMMY_DATA);
-  // const [candidates, setCandidates] = useState({});
-  const [selectedFilters, setSelectedFilters] = useState(initialState);
-  // const [selectedFilters, setSelectedFilters] = useState({});
+  const [candidates, setCandidates] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+  const [selectedFilters, setSelectedFilters] = useState({});
 
   const fetchCandidates = async (filter) => {
     setSelectedFilters(filter);
@@ -48,6 +47,7 @@ const Dashboard = () => {
         min_fit_score: parseFloat(filter.min_fit_score / 100),
         selected_kpis: filter.selected_kpis,
       };
+      setLoading(true);
       const response = await fetch(
         "https://talentbackend.ctruh.com/profile-candidates",
         {
@@ -60,10 +60,22 @@ const Dashboard = () => {
       );
       const data = await response.json();
       setCandidates(data);
+      setLoading(false);
     } catch (error) {
       console.log(error);
+      setLoading(false);
+      setError(true);
     }
   };
+
+  if (error) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-white">
+        <h3 className="text-4xl font-bold">Something went wrong</h3>
+        <p className="text-2xl font-medium">Please try again!</p>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full mt-3 flex">
@@ -113,6 +125,11 @@ const Dashboard = () => {
             </h4>
             <CandidatesList candidates={candidates} />
           </div>
+        </div>
+      )}
+      {loading && (
+        <div className="fixed inset-0 w-dvw h-dvh flex flex-col items-center justify-center bg-black/60">
+          <Loading content="Please wait" />
         </div>
       )}
     </div>

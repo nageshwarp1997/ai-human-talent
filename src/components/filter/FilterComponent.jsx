@@ -468,7 +468,16 @@ const FilterComponent = ({ fetchCandidates }) => {
           );
         })}
       </div>
-      <div className="w-full p-4">
+      <div className="w-full p-4 flex flex-col gap-4">
+        <div className=" flex items-center justify-between font-semibold">
+          <span>Total Weight:</span>
+          <span>
+            {Object.values(state.selected_kpis)
+              .filter((kpi) => kpi.enabled)
+              .reduce((sum, kpi) => sum + (kpi.weight ?? 0), 0)}{" "}
+            / 100
+          </span>
+        </div>
         <button
           className="bg-[#0A6562] rounded-full w-full text-white py-2"
           onClick={handleClick}
