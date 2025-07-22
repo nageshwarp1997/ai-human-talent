@@ -2,16 +2,21 @@ import React, { useState } from "react";
 import FilterComponent from "../components/filter/FilterComponent";
 import BarGraph from "../components/dashboard/BarGraph";
 import RadarGraph from "../components/dashboard/RadarGraph";
-import PolarGraph from "../components/dashboard/PolarGraph";
+import PolarGraphForLocation from "../components/dashboard/PolarGraphForLocation";
+import PolarGraphForRegion from "../components/dashboard/PolarGraphForRegion";
 import CandidatesList from "../components/dashboard/CandidatesList";
 import banner from "../assets/banner.png";
 import Loading from "../components/loading/Loading";
+// import { DUMMY_DATA } from "./candidatesDummyData";
+// import { initialState } from "../components/filter/filterOptions";
 
 const Dashboard = () => {
   const [candidates, setCandidates] = useState({});
+  // const [candidates, setCandidates] = useState(DUMMY_DATA);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [selectedFilters, setSelectedFilters] = useState({});
+  // const [selectedFilters, setSelectedFilters] = useState(initialState);
 
   const fetchCandidates = async (filter) => {
     setSelectedFilters(filter);
@@ -38,7 +43,7 @@ const Dashboard = () => {
       const json = {
         field: [
           filter.Domain,
-          ...filter.subdomain.split(",").map((s) => s.trim()),
+          ...filter.subdomain.split(",").filter(Boolean).map((s) => s.trim()),
         ],
         top_k: parseInt(filter.top_k),
         exp: filter.exp,
@@ -72,10 +77,14 @@ const Dashboard = () => {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-white">
         <h3 className="text-4xl font-bold">Something went wrong</h3>
-        <p className="text-2xl font-medium">Please try again!</p>
+        <p className="text-2xl font-medium">
+          Refresh the page and Please try again!
+        </p>
       </div>
     );
   }
+
+  console.log("selectedFilters", selectedFilters);
 
   return (
     <div className="w-full mt-3 flex">
@@ -115,8 +124,21 @@ const Dashboard = () => {
               />
             </div>
             <div className=" px-3 h-[300px]">
-              <h5 className="text-center font-bold">Candidates Territory</h5>
-              <PolarGraph candidates={candidates} />
+              {selectedFilters?.country_code?.includes(",") ? (
+                <>
+                  <h5 className="text-center font-bold">
+                    Candidates by Region
+                  </h5>
+                  <PolarGraphForRegion candidates={candidates} />
+                </>
+              ) : (
+                <>
+                  <h5 className="text-center font-bold">
+                    Candidates by Territory
+                  </h5>
+                  <PolarGraphForLocation candidates={candidates} />
+                </>
+              )}
             </div>
           </div>
           <div className="w-full mt-4">
@@ -128,7 +150,7 @@ const Dashboard = () => {
         </div>
       )}
       {loading && (
-        <div className="fixed inset-0 w-dvw h-dvh flex flex-col items-center justify-center bg-black/60">
+        <div className="fixed inset-0 w-dvw h-dvh flex flex-col items-center justify-center bg-black/60 z-[100]">
           <Loading content="Please wait" />
         </div>
       )}
