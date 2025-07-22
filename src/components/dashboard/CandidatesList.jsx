@@ -3,7 +3,6 @@ import { MdOutlineFilterAlt, MdCompareArrows } from "react-icons/md";
 import { ImDownload3 } from "react-icons/im";
 import { RiFileExcel2Fill } from "react-icons/ri";
 import { regions } from "../filter/filterOptions";
-import { FaEllipsisVertical } from "react-icons/fa6";
 import { MdClose } from "react-icons/md";
 import { useOutsideClick } from "../../hooks/useOutsideClick";
 import LineChart from "./LineChart";
@@ -14,6 +13,8 @@ const CandidatesList = ({ candidates }) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [callingId, setCallingId] = useState("");
 
   const summaryRef = useOutsideClick(
     () => setOpenDialogCandidate(null),
@@ -66,6 +67,24 @@ const CandidatesList = ({ candidates }) => {
     const lower = Math.floor(salary / 100000) * 10;
     const upper = lower + 10;
     return `${lower}k-${upper}k`;
+  };
+
+  const getSummary = async (id) => {
+    setCallingId(id);
+    try {
+      setLoading(true);
+      const resp = await fetch(
+        `https://talentbackend.ctruh.com/candidate-summary/${id}`,
+        { method: "GET" }
+      );
+      const data = await resp.json();
+      setOpenDialogCandidate(data.summary);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      alert("Something went wrong");
+      console.error(error);
+    }
   };
 
   return (
@@ -121,7 +140,7 @@ const CandidatesList = ({ candidates }) => {
         </div>
         <div className="w-full max-h-[400px] overflow-auto">
           <table className="table-auto w-full text-sm text-left border-collapse break-words">
-            <thead className="sticky top-0">
+            <thead className="sticky top-0 z-10">
               <tr className="bg-[#E5ECEC] border border-[#DEE2E6] rounded-t-sm">
                 <th className="px-2 py-3">
                   <input
@@ -142,6 +161,7 @@ const CandidatesList = ({ candidates }) => {
                 <th className="px-2 py-3">Salary in Range (AED)</th>
                 <th className="px-2 py-3">Fit (%)</th>
                 <th className="px-2 py-3">Ex. Conver Rate</th>
+                <th className="px-2 py-3">Action</th>
               </tr>
             </thead>
             <tbody className="text-gray-800">
@@ -203,13 +223,25 @@ const CandidatesList = ({ candidates }) => {
                       <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs">
                         {(50.1).toFixed(2)}%
                       </span>
-                      <FaEllipsisVertical
+                      {/* <FaEllipsisVertical
                         className="cursor-pointer"
                         onClick={() =>
                           setOpenDialogCandidate(candidate?.summary)
                         }
-                      />
+                      /> */}
                     </div>
+                  </td>
+                  <td className="px-2 py-2 align-middle">
+                    {loading && callingId === candidate?.orcid_id ? (
+                      <div class="spinner" />
+                    ) : (
+                      <div
+                        className="flex items-center gap-2 text-blue-700 cursor-pointer"
+                        onClick={() => getSummary(candidate?.orcid_id)}
+                      >
+                        Summary
+                      </div>
+                    )}
                   </td>
                 </tr>
               ))}
