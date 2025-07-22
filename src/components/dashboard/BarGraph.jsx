@@ -27,7 +27,11 @@ const BarGraph = ({ candidates }) => {
   });
 
   const resources = Object.keys(salariesByRange)
-    .sort((a, b) => a.localeCompare(b)) // Sort alphabetically
+    .sort((a, b) => {
+      const numA = parseInt(a.split("k")[0]);
+      const numB = parseInt(b.split("k")[0]);
+      return numA - numB;
+    })
     .map((salaryRange) => ({
       salaryRange,
       count: salariesByRange[salaryRange] ?? 0,
