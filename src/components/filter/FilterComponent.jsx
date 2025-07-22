@@ -10,6 +10,7 @@ import {
   jobRoles,
   initialState,
 } from "./filterOptions";
+import { useOutsideClick } from "../../hooks/useOutsideClick";
 
 function reducer(state, action) {
   switch (action.type) {
@@ -30,11 +31,11 @@ function reducer(state, action) {
       return { ...state, job: action.payload };
     }
     case "TOGGLE_COUNTRY_CODE": {
-      // const current = state.country_code ? state.country_code.split(",") : [];
-      // const updated = current.includes(action.payload)
-      //     ? current.filter((item) => item !== action.payload)
-      //     : [...current, action.payload];
-      return { ...state, country_code: action.payload };
+      const current = state.country_code ? state.country_code.split(",") : [];
+      const updated = current.includes(action.payload)
+        ? current.filter((item) => item !== action.payload)
+        : [...current, action.payload];
+      return { ...state, country_code: updated.join(",") };
     }
     case "SET_TOPK":
       return { ...state, top_k: action.payload };
@@ -99,7 +100,11 @@ const FilterComponent = ({ fetchCandidates }) => {
   const [openIndex, setOpenIndex] = useState(null);
   const [state, dispatch] = useReducer(reducer, initialState);
   const [isOpen, setIsOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   //   const [minimumFit, setMinimumFit] = useState(10);
+
+  const subDomainRef = useOutsideClick(() => setIsOpen(false), isOpen);
+  const regionRef = useOutsideClick(() => setIsExpanded(false), isExpanded);
 
   const toggleDropdown = (index) => {
     setOpenIndex(openIndex === index ? null : index);
@@ -140,14 +145,14 @@ const FilterComponent = ({ fetchCandidates }) => {
           </div>
         </div>
         {/* Subdomain Dropdown */}
-        <div className="flex flex-col">
+        <div className="flex flex-col" ref={subDomainRef}>
           <label htmlFor="sub-domain">Sub Domain</label>
           <div className="relative">
             <div className="relative w-full">
               <button
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}
-                className="appearance-none w-full bg-white border border-[#C9C9C9] p-2 pl-4 pr-10 rounded-full leading-tight focus:outline-none focus:ring-1 focus:ring-[#C9C9C9] text-left whitespace-nowrap overflow-hidden text-ellipsis"
+                className="appearance-none w-full bg-white border border-[#C9C9C9] p-2 pl-4 pr-10 rounded-full leading-tight focus:outline-none focus:ring-1 focus:ring-[#C9C9C9] text-left whitespace-nowrap overflow-hidden text-ellipsis capitalize"
               >
                 {state?.subdomain?.length > 0
                   ? state?.subdomain?.split(",")?.join(", ")
@@ -238,32 +243,50 @@ const FilterComponent = ({ fetchCandidates }) => {
           </div>
         </div>
         {/* Regions dropdown */}
-        <div className="flex flex-col">
+        <div className="flex flex-col" ref={regionRef}>
           <label htmlFor="top-candidates">Region</label>
           <div className="relative">
-            <select
-              name="top-candidates"
-              id="top-candidates"
-              value={state?.country_code}
-              onChange={(e) =>
-                dispatch({
-                  type: "TOGGLE_COUNTRY_CODE",
-                  payload: e.target.value,
-                })
-              }
-              className="appearance-none w-full bg-white border border-[#C9C9C9] p-2 px-4 rounded-full leading-tight focus:outline-none focus:ring-1 focus:ring-[#C9C9C9] overflow-hidden"
-            >
-              {regions.map((region, index) => {
-                return (
-                  <option key={index} value={region?.value}>
-                    {region?.name}
-                  </option>
-                );
-              })}
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-600 bg-[#0A6562] rounded-r-full">
-              <MdKeyboardArrowDown className="text-2xl text-white" />
+            <div className="relative w-full">
+              <button
+                type="button"
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="appearance-none w-full bg-white border border-[#C9C9C9] p-2 pl-4 pr-10 rounded-full leading-tight focus:outline-none focus:ring-1 focus:ring-[#C9C9C9] text-left whitespace-nowrap overflow-hidden text-ellipsis"
+              >
+                {state?.country_code?.length > 0
+                  ? state?.country_code?.split(",")?.join(", ")
+                  : "Select"}
+              </button>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-gray-600 bg-[#0A6562] rounded-r-full">
+                <MdKeyboardArrowDown className="text-white text-xl" />
+              </div>
             </div>
+            {isExpanded && (
+              <div className="absolute z-10 mt-1 w-full bg-[#f6f6f6] border border-gray-300 rounded shadow p-2 max-h-60 overflow-y-auto">
+                {regions.map((region) => (
+                  <label
+                    key={region.value}
+                    className="flex items-center space-x-2 py-1 cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={state?.country_code
+                        ?.split(",")
+                        ?.includes(region.value)}
+                      onChange={() =>
+                        dispatch({
+                          type: "TOGGLE_COUNTRY_CODE",
+                          payload: region.value,
+                        })
+                      }
+                      className="accent-[#0A6562] w-4 h-4"
+                    />
+                    <span className="text-sm text-gray-800 truncate">
+                      {region.name}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            )}
           </div>
         </div>
         {/* Free KPI Text field*/}
