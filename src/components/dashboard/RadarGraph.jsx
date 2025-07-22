@@ -73,9 +73,9 @@ const RadarGraph = ({ selectedFilters, candidates }) => {
           kpiAverageCount && Object.keys(kpiAverageCount)?.length > 0
             ? Object.values(kpiAverageCount)
             : [],
-        backgroundColor: "#826AF9", // purple
+        backgroundColor: "#0A6562", // purple
         borderColor: "transparent",
-        pointBackgroundColor: "#826AF9",
+        pointBackgroundColor: "#0A6562",
       },
       {
         label: "AI Benchmark",

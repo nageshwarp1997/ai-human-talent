@@ -229,7 +229,7 @@ const FilterComponent = ({ fetchCandidates }) => {
               }
               className="appearance-none w-full bg-white border border-[#C9C9C9] p-2 px-4 rounded-full leading-tight focus:outline-none focus:ring-1 focus:ring-[#C9C9C9] overflow-hidden"
             >
-              {[10, 15, 20, 50, 100].map((topN) => {
+              {[5, 10, 15, 20, 50, 100].map((topN) => {
                 return (
                   <option key={topN} value={topN}>
                     {topN}

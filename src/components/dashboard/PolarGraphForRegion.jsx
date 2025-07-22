@@ -42,7 +42,7 @@ const PolarGraphForRegion = ({ candidates }) => {
   }, [candidates]);
 
   const labels = Object.keys(candidatesCount);
-  const values = Object.values(candidatesCount);
+  const values = Object.values(candidatesCount)?.map(() => 1);
   const backgroundColors = generateColors(labels.length);
 
   const data = {
@@ -63,30 +63,19 @@ const PolarGraphForRegion = ({ candidates }) => {
     plugins: {
       legend: {
         display: false,
-        // position: "right", // 👈 moves legend to the right
-        // align: "center", // 👈 aligns legend vertically center
-        // labels: {
-        //     usePointStyle: true, // makes them round
-        //     pointStyle: "circle", // optional: default is 'circle'
-        //     boxWidth: 8, // 👈 smaller circle size
-        //     boxHeight: 8, // 👈 optional: explicitly smaller height
-        //     padding: 12,
-        //     font: {
-        //         size: 12, // 👈 reduce font size too
-        //     },
-        // },
       },
       datalabels: {
-        // align: "end",
-        // anchor: "end",
-        // offset: 6,
-        // formatter: (value) => value,
-        // backgroundColor: "#fff",
-        display: "auto",
+        display: true,
+        formatter: (_, context) => {
+          return context?.chart?.data?.labels[context?.dataIndex];
+        },
         color: "#000",
         font: {
           weight: "bold",
+          size: 10,
         },
+        anchor: "center",
+        align: "end",
       },
     },
     scales: {

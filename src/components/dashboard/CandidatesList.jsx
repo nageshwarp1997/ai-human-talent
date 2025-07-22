@@ -12,7 +12,7 @@ const CandidatesList = ({ candidates }) => {
   const [openDialogCandidate, setOpenDialogCandidate] = useState(null);
   const [showCompareCandidates, setShowCompareCandidates] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [callingId, setCallingId] = useState("");
@@ -130,7 +130,7 @@ const CandidatesList = ({ candidates }) => {
                   setCurrentPage(1);
                 }}
               >
-                {[10, 25, 50, 100].map((value) => (
+                {[5, 10, 25, 50, 100].map((value) => (
                   <option key={value} value={value}>
                     {value}
                   </option>
@@ -153,11 +153,11 @@ const CandidatesList = ({ candidates }) => {
                     onChange={handleSelectAll}
                   />
                 </th>
-                <th className="px-2 py-3">Employee Name</th>
+                <th className="px-2 py-3">Name</th>
                 <th className="px-2 py-3">Position</th>
                 <th className="px-2 py-3">Company</th>
                 <th className="px-2 py-3">Nationality</th>
-                <th className="px-2 py-3">Location</th>
+                <th className="px-2 py-3">Locations</th>
                 <th className="px-2 py-3">University</th>
                 <th className="px-2 py-3">Salary in Range (AED)</th>
                 <th className="px-2 py-3">Fit (%)</th>
@@ -202,7 +202,7 @@ const CandidatesList = ({ candidates }) => {
                     {candidate?.current_position || "N/A"}
                   </td>
                   <td className="px-2 py-2 break-words">
-                    {candidate?.current_organization}
+                    {candidate?.current_organization || "N/A"}
                   </td>
                   <td className="px-2 py-2 flex items-center gap-2 break-words">
                     {

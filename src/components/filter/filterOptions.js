@@ -294,7 +294,7 @@ export const jobRoles = ["Professor", "Scientist", "Director"];
 export const initialState = {
   Domain: "biotechnology",
   subdomain: "",
-  top_k: 10,
+  top_k: 5,
   job: "",
   exp: 0,
   country_code: "US",

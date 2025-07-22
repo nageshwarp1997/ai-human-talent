@@ -43,7 +43,10 @@ const Dashboard = () => {
       const json = {
         field: [
           filter.Domain,
-          ...filter.subdomain.split(",").filter(Boolean).map((s) => s.trim()),
+          ...filter.subdomain
+            .split(",")
+            .filter(Boolean)
+            .map((s) => s.trim()),
         ],
         top_k: parseInt(filter.top_k),
         exp: filter.exp,
@@ -108,13 +111,13 @@ const Dashboard = () => {
             />
           </div>
           <div className="grid w-full sm:grid-cols-1 lg:grid-cols-3">
-            <div className=" px-3 border-r-[#CAD5D5] border-r h-[300px] w-full">
+            <div className=" px-3 border-r-[#CAD5D5] border-r h-[300px] w-full flex flex-col gap-3">
               <h5 className="text-center font-bold">
                 Candidates by Salary Range (AED)
               </h5>
               <BarGraph candidates={candidates.candidates} />
             </div>
-            <div className=" px-3 h-[300px] border-r-[#CAD5D5] border-r">
+            <div className=" px-3 h-[300px] border-r-[#CAD5D5] border-r flex flex-col gap-3">
               <h5 className="text-center font-bold">
                 Average Candidate vs. AI Benchmark
               </h5>
@@ -123,18 +126,18 @@ const Dashboard = () => {
                 candidates={candidates}
               />
             </div>
-            <div className=" px-3 h-[300px]">
+            <div className=" px-3 h-[300px] flex flex-col gap-3">
               {selectedFilters?.country_code?.includes(",") ? (
                 <>
                   <h5 className="text-center font-bold">
-                    Candidates by Region
+                    Candidates by Territory
                   </h5>
                   <PolarGraphForRegion candidates={candidates} />
                 </>
               ) : (
                 <>
                   <h5 className="text-center font-bold">
-                    Candidates by Territory
+                    Candidates by Region
                   </h5>
                   <PolarGraphForLocation candidates={candidates} />
                 </>
